@@ -1,15 +1,15 @@
 import {
   ADD_ARTICLE,
-  REMOVE_ARTICLE,
-  DATA_LOADED
+  DATA_LOADED,
+  REMOVE_ARTICLE
 } from "../constants/action-types";
 
-const initialState = {
+export const initialState = {
   articles: [],
   remote_articles: []
 };
 
-function rootReducer(state = initialState, action) {
+export function reducer(state = initialState, action) {
   if (action.type === ADD_ARTICLE) {
     return Object.assign({}, state, {
       articles: state.articles.concat(action.payload)
@@ -30,5 +30,3 @@ function rootReducer(state = initialState, action) {
 
   return state;
 }
-
-export default rootReducer;

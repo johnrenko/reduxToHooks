@@ -1,44 +1,25 @@
 // src/js/components/List.jsx
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useContext } from "react";
 import { removeArticle } from "../actions/index";
+import { Store } from "../store";
 
-const mapStateToProps = state => {
-  return { articles: state.articles };
-};
+export default function List() {
+  const { state, dispatch } = useContext(Store);
 
-const mapDispatchToProps = dispatch => {
-  return { removeArticle: id => dispatch(removeArticle(id)) };
-};
-
-class ConnectedList extends Component {
-  constructor() {
-    super();
-    this.onClick = this.onClick.bind(this);
+  function onClick(event) {
+    dispatch(removeArticle(event.target.id));
   }
 
-  onClick(event) {
-    this.props.removeArticle(event.target.id);
-  }
-
-  render() {
-    return (
-      <ul className="list-group list-group-flush">
-        {this.props.articles.map(el => (
-          <li className="list-group-item" key={el.id}>
-            {el.title}
-            <button id={el.id} onClick={this.onClick}>
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
-    );
-  }
+  return (
+    <ul className="list-group list-group-flush">
+      {state.articles.map(el => (
+        <li className="list-group-item" key={el.id}>
+          {el.title}
+          <button id={el.id} onClick={onClick}>
+            Remove
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
 }
-const List = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedList);
-
-export default List;

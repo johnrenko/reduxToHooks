@@ -1,36 +1,40 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { getData } from "../actions/index";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { DATA_LOADED } from "../constants/action-types";
+import { Store } from "../store";
 
-const mapStateToProps = state => {
-  return { remote_articles: state.remote_articles.splice(0, 10) };
-};
+export default function Post() {
+  const { state, dispatch } = useContext(Store);
+  const [items, setItems] = useState(10);
 
-function mapDispatchToProps(dispatch) {
-  return { getData: () => dispatch(getData()) };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await axios
+          .get("https://jsonplaceholder.typicode.com/posts")
+          .then((response) => dispatch({ type: DATA_LOADED, payload: response.data }));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  let remote_articles = state.remote_articles.slice(0, items);
+
+  return (
+    <ul className="list-group list-group-flush">
+      {remote_articles.map(el => (
+        <li className="list-group-item" key={el.id}>
+          {el.title}
+        </li>
+      ))}
+      {items === 100 ? (
+        <span>No more articles to load</span>
+      ) : (
+        <button onClick={() => setItems(items + 10)}>Load more</button>
+      )}
+    </ul>
+  );
 }
-
-class ConnectedPost extends Component {
-  componentDidMount() {
-    this.props.getData();
-  }
-
-  render() {
-    return (
-      <ul className="list-group list-group-flush">
-        {this.props.remote_articles.map(el => (
-          <li className="list-group-item" key={el.id}>
-            {el.title}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-}
-
-const Post = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedPost);
-
-export default Post;

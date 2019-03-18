@@ -1,16 +1,10 @@
-// src/js/store/index.js
-import { createStore, applyMiddleware, compose } from "redux";
-import rootReducer from "../reducers/index";
-import createSagaMiddleware from "redux-saga";
-import apiSaga from "../sagas/api-saga";
+import React, { useReducer, createContext } from "react";
+import { initialState, reducer } from "../reducers";
 
-const initialiseSagaMiddleware = createSagaMiddleware();
+export const Store = createContext();
 
-const store = createStore(
-  rootReducer,
-  compose(applyMiddleware(initialiseSagaMiddleware))
-);
-
-initialiseSagaMiddleware.run(apiSaga);
-
-export default store;
+export function StoreProvider(props) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const value = { state, dispatch };
+  return <Store.Provider value={value}>{props.children}</Store.Provider>;
+}
